@@ -3,7 +3,13 @@
 A minimal ASP.NET Core (.NET 8) API for lending books. This repository currently ships the
 **Livro** (book) catalog with full CRUD, backed by PostgreSQL through EF Core.
 
-> Roadmap (not built yet): user management, lending/loan flow, and notifications.
+> **Product direction:** a multi-library (SaaS) system for physical libraries — free lending with
+> due dates, a **reputation score** (no payments) that drives per-reader borrowing privileges, email
+> reminders, and an operator UI. See [`docs/product/`](docs/product/): [vision](docs/product/vision.md),
+> [domain model](docs/product/domain-model.md), [roadmap](docs/product/roadmap.md).
+>
+> This repository currently ships **Phase 0** (Livro catalog). Later phases (tenancy, auth, lending,
+> reputation, notifications, UI) are planned in the roadmap and not built yet.
 
 ## Stack
 

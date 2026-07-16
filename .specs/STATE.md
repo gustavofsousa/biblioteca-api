@@ -17,6 +17,43 @@
 - **AD-005 — EF initial migration committed.** Schema created via `dotnet ef migrations add` (no
   live DB required to generate).
 
+- **AD-006 — Product-mode pivot (supersedes AD-001's MVP posture).** Direction confirmed: this is a
+  full product, not a throwaway MVP. Spec depth, testing, and docs are warranted. Product-level docs
+  live in `docs/product/` (vision, domain-model, roadmap); features flow through the spec-driven
+  pipeline. Livro CRUD (AD-001..AD-005) remains the built foundation.
+- **AD-007 — Multi-tenant SaaS.** Serves many libraries on one deployment; each **Biblioteca** is a
+  tenant with isolated data (`BibliotecaId` on every entity). Isolation strategy (shared-schema
+  global filter vs. schema-per-tenant) is an open macro decision, settled in the `tenancy-foundation`
+  feature's design phase. Default lean: shared schema + global query filter.
+- **AD-008 — No payments; reputation replaces money.** "Aluguel" = free lending with a `Prazo`.
+  Late returns decrement a per-Leitor **ReputationScore** (`−PENALTY_PER_DAY×dias`, floor 0) and
+  create an immutable **RegistroDeAtraso**; the score drives **NivelDeLeitor** bands that grant
+  borrowing privileges (max concurrent, duration, renewals). No gateway/fines/invoices. Score params
+  and bands are per-tenant configurable. See `docs/product/domain-model.md`.
+- **AD-009 — Delivery surface: API + operation UI.** Roadmap includes an attendant desk UI, a reader
+  portal, and an admin console (Phase 6), not just the REST API.
+
+- **AD-010 — Score baseline 30, may go negative.** New Leitor starts at `SCORE_BASELINE = 30` (trust
+  earned, not granted). Late penalty has **no floor**; score below 0 is the trigger for the
+  ListaDeAtenção. Bands rebased: Ouro 80–100, Prata 50–79, Bronze 20–49, Restrito 0–19, Atenção <0.
+  Supersedes the earlier baseline-100/floor-0 sketch.
+- **AD-011 — AjusteManual (attendant override).** An `Atendente` may grant a specific Leitor extra
+  loan slots (`bonusMaxEmprestimos`) and/or extra prazo days (`bonusDiasPrazo`) on top of their Nivel,
+  auditable. Effective limits = Nivel + AjusteManual. This is the deliberate flexibility escape hatch.
+- **AD-012 — ListaDeAtenção.** Leitores with score < 0 surface to the Atendente for human contact
+  (email/WhatsApp/phone) — a workflow, not an automatic permanent ban.
+- **AD-013 — Contact channels: Email + Celular required; notifications multi-channel.** Every Usuario
+  has both. Notifications go over a pluggable `CanalDeNotificacao` (Email + WhatsApp now, SMS/push
+  later). WhatsApp uses an external API (Cloud API vs. BSP = open decision).
+- **AD-014 — Extensible-by-default architecture.** Not a closed product. Seams: pluggable notification
+  channels, per-tenant scoring/band config, per-reader AjusteManual. Add at seams over editing core.
+- **AD-015 — Target framework .NET 10 (preflight `net10-upgrade`).** Upgrade from net8.0 to net10.0
+  (and EF Core/Npgsql/OpenAPI to v10) **before** new feature work. **Blocked:** only the .NET 8 SDK
+  (8.0.128) is installed on this machine — the .NET 10 SDK must be installed first; the bump cannot be
+  verified (build/test) until then.
+- **AD-016 — Brazil-first.** Product targets libraries across Brazil: PT-BR UI, LGPD, WhatsApp as a
+  first-class channel.
+
 ## Handoff (in-flight)
 
 Feature `organize-biblioteca-api` — **DONE / PASS** (validation.md). All 8 ACs met; solution
