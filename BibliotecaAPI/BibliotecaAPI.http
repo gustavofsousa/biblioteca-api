@@ -1,6 +1,34 @@
 @BibliotecaAPI_HostAddress = http://localhost:5012
 
-GET {{BibliotecaAPI_HostAddress}}/weatherforecast/
+### List all livros
+GET {{BibliotecaAPI_HostAddress}}/livros
 Accept: application/json
 
-###
+### Get a livro by id
+GET {{BibliotecaAPI_HostAddress}}/livros/1
+Accept: application/json
+
+### Create a livro
+POST {{BibliotecaAPI_HostAddress}}/livros
+Content-Type: application/json
+
+{
+  "titulo": "Clean Code",
+  "autor": "Robert C. Martin",
+  "categoria": "Engenharia",
+  "exemplaresDisponiveis": 3
+}
+
+### Update a livro
+PUT {{BibliotecaAPI_HostAddress}}/livros/1
+Content-Type: application/json
+
+{
+  "titulo": "Clean Architecture",
+  "autor": "Robert C. Martin",
+  "categoria": "Arquitetura",
+  "exemplaresDisponiveis": 5
+}
+
+### Delete a livro
+DELETE {{BibliotecaAPI_HostAddress}}/livros/1
