@@ -19,4 +19,7 @@
 
 ## Handoff (in-flight)
 
-Feature `organize-biblioteca-api` — executing. See `.specs/features/organize-biblioteca-api/`.
+Feature `organize-biblioteca-api` — **DONE / PASS** (validation.md). All 8 ACs met; solution
+builds clean (0 warnings), 8 endpoint tests green, discrimination sensor killed 3/3 mutants.
+Open follow-ups (out of scope, MVP): Usuario endpoints/auth, lending flow, notifications,
+pagination, CI, live-Postgres verification.
