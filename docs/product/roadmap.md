@@ -11,7 +11,7 @@
 
 | Phase | Theme | State |
 | --- | --- | --- |
-| 0 | Foundation & catalog (existing) | partly ✅ |
+| 0 | Foundation & catalog (existing) | ✅ |
 | 1 | Tenancy & identity | 🔜 |
 | 2 | Catalog depth (Exemplar, Categoria, search) | ⬜ |
 | 3 | Lending core (Emprestimo, Prazo, Renovação) | ⬜ |
@@ -22,18 +22,27 @@
 
 ---
 
-## Phase 0 — Foundation & catalog *(mostly done)*
+## Phase 0 — Foundation & catalog *(done ✅)*
 
 | # | Feature | Slug | State |
 | --- | --- | --- | --- |
-| **0.0** | **Upgrade .NET 8 → .NET 10** (preflight, before any new work) | `net10-upgrade` | 🔜 **blocked: SDK not installed** |
+| **0.0** | **Upgrade .NET 8 → .NET 10** (preflight, before any new work) | `net10-upgrade` | ✅ |
 | 0.1 | Buildable, layered Minimal API + Livro CRUD | `organize-biblioteca-api` | ✅ |
-| 0.2 | CI pipeline (build + test on push) | `ci-pipeline` | ⬜ |
-| 0.3 | Live-Postgres smoke verification | `postgres-smoke` | ⬜ |
+| 0.2 | CI pipeline (build + test on push) | `ci-pipeline` | ✅ |
+| 0.3 | Live-Postgres smoke verification | `postgres-smoke` | ✅ |
 
-> **0.0 detail:** bump `TargetFramework` to `net10.0`, EF Core / Npgsql / OpenAPI packages to their
-> v10 line, retarget the test project, `dotnet build` + `dotnet test` must stay green. **Requires the
-> .NET 10 SDK on the machine** — currently only 8.0.x is installed here (see handoff note in `STATE.md`).
+> **0.0 done:** `TargetFramework` bumped to `net10.0` (app + tests), EF Core/Npgsql/OpenAPI on the
+> v10 line (EF Core 10.0.10, Npgsql 10.0.3, AspNetCore.OpenApi 10.0.10), `dotnet-ef` tool 10.0.10,
+> SDK pinned via `global.json`. Deprecated `WithOpenApi()` removed (ASPDEPR002). Build clean
+> (0 warnings, `-warnaserror` in CI), 8/8 tests green on net10.0. The .NET 10 SDK (10.0.110) is now
+> installed — the earlier block is cleared (AD-015 in `STATE.md`).
+>
+> **0.2 done:** GitHub Actions workflow ([.github/workflows/ci.yml](../../.github/workflows/ci.yml))
+> runs restore → build (Release, `-warnaserror`) → test on every push and PR to `main`.
+>
+> **0.3 done:** [scripts/postgres-smoke.sh](../../scripts/postgres-smoke.sh) spins up a Postgres
+> container, applies migrations, boots the API against it, round-trips a Livro over HTTP, and
+> confirms the row directly in Postgres — verified PASS locally.
 
 ## Phase 1 — Tenancy & identity *(next — unblocks everything)*
 

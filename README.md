@@ -1,6 +1,6 @@
 # biblioteca-api
 
-A minimal ASP.NET Core (.NET 8) API for lending books. This repository currently ships the
+A minimal ASP.NET Core (.NET 10) API for lending books. This repository currently ships the
 **Livro** (book) catalog with full CRUD, backed by PostgreSQL through EF Core.
 
 > **Product direction:** a multi-library (SaaS) system for physical libraries — free lending with
@@ -13,10 +13,11 @@ A minimal ASP.NET Core (.NET 8) API for lending books. This repository currently
 
 ## Stack
 
-- ASP.NET Core 8 Minimal API
-- Entity Framework Core 9 + Npgsql (PostgreSQL)
+- ASP.NET Core 10 Minimal API (SDK pinned via `global.json`)
+- Entity Framework Core 10 + Npgsql 10 (PostgreSQL)
 - Swagger / OpenAPI (Development only)
 - xUnit endpoint tests over EF InMemory
+- GitHub Actions CI (build + test on push) — [.github/workflows/ci.yml](.github/workflows/ci.yml)
 
 ## Project layout
 
@@ -88,3 +89,16 @@ dotnet test
 
 Endpoint tests boot the real API with the Npgsql provider swapped for an isolated in-memory
 database, so no PostgreSQL instance is required to run them.
+
+## Live-Postgres smoke check
+
+The unit tests use EF InMemory. To verify the app against a **real PostgreSQL** end to end
+(migrations apply, HTTP round-trip persists), run the smoke script (requires Docker):
+
+```bash
+scripts/postgres-smoke.sh
+```
+
+It spins up a throwaway Postgres container, applies the EF migrations, boots the API against it,
+POSTs then GETs a Livro, confirms the row directly in Postgres, and tears everything down.
+Prints `=== POSTGRES SMOKE: PASS ===` on success.

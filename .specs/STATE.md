@@ -47,16 +47,36 @@
   later). WhatsApp uses an external API (Cloud API vs. BSP = open decision).
 - **AD-014 — Extensible-by-default architecture.** Not a closed product. Seams: pluggable notification
   channels, per-tenant scoring/band config, per-reader AjusteManual. Add at seams over editing core.
-- **AD-015 — Target framework .NET 10 (preflight `net10-upgrade`).** Upgrade from net8.0 to net10.0
-  (and EF Core/Npgsql/OpenAPI to v10) **before** new feature work. **Blocked:** only the .NET 8 SDK
-  (8.0.128) is installed on this machine — the .NET 10 SDK must be installed first; the bump cannot be
-  verified (build/test) until then.
+- **AD-015 — Target framework .NET 10 (preflight `net10-upgrade`). DONE.** App + tests retargeted to
+  net10.0; EF Core 10.0.10, Npgsql 10.0.3, Npgsql.EFCore.PostgreSQL 10.0.3, AspNetCore.OpenApi 10.0.10,
+  Swashbuckle 10.2.3, `dotnet-ef` tool 10.0.10. SDK pinned via `global.json` (10.0.100 rollForward
+  latestFeature → resolves 10.0.110). Deprecated `WithOpenApi()` calls removed (ASPDEPR002) to hold
+  0 warnings. Build clean (`-warnaserror` in CI), 8/8 tests green on net10.0. **Block cleared:** the
+  .NET 10 SDK (10.0.110) is now installed alongside 8.0.128; the earlier "SDK not installed" note is
+  obsolete.
+- **AD-017 — CI on GitHub Actions (`ci-pipeline`).** `.github/workflows/ci.yml` runs restore → build
+  (Release, `-warnaserror`) → test on every push (any branch) and PR to `main`; SDK from `global.json`
+  via `setup-dotnet`. Warnings fail the build to protect the 0-warning bar. Test results uploaded as a
+  trx artifact.
+- **AD-018 — Live-Postgres smoke as a script, not a CI gate (`postgres-smoke`).** `scripts/postgres-smoke.sh`
+  (Docker Postgres 16 → migrations → API boot → HTTP round-trip → direct psql assertion → teardown) is
+  the live-DB check, kept out of CI to avoid a Docker-in-CI dependency for the MVP. CI stays fast on
+  InMemory tests; the smoke script is the on-demand real-DB verification. Verified PASS locally.
 - **AD-016 — Brazil-first.** Product targets libraries across Brazil: PT-BR UI, LGPD, WhatsApp as a
   first-class channel.
 
 ## Handoff (in-flight)
 
-Feature `organize-biblioteca-api` — **DONE / PASS** (validation.md). All 8 ACs met; solution
-builds clean (0 warnings), 8 endpoint tests green, discrimination sensor killed 3/3 mutants.
-Open follow-ups (out of scope, MVP): Usuario endpoints/auth, lending flow, notifications,
-pagination, CI, live-Postgres verification.
+**Phase 0 — COMPLETE ✅** (branch `phase-0-foundation`). All four features done:
+
+- `organize-biblioteca-api` (0.1) — DONE/PASS (validation.md). 8 ACs, 0 warnings, 8 tests green,
+  3/3 mutants killed.
+- `net10-upgrade` (0.0) — DONE/PASS. See AD-015 + `.specs/features/net10-upgrade/validation.md`.
+- `ci-pipeline` (0.2) — DONE. See AD-017 + `.specs/features/ci-pipeline/validation.md`. (First real
+  GitHub Actions run happens on push — CI steps validated locally.)
+- `postgres-smoke` (0.3) — DONE/PASS. See AD-018 + `.specs/features/postgres-smoke/validation.md`.
+
+**Next:** Phase 1 — Tenancy & identity (`tenancy-foundation` first; macro AD on isolation strategy,
+default lean = shared schema + global query filter per AD-007).
+
+Open follow-ups still out of scope: Usuario endpoints/auth, lending flow, notifications, pagination.
