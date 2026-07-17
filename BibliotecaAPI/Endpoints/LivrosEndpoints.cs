@@ -17,15 +17,13 @@ public static class LivrosEndpoints
                     .AsNoTracking()
                     .Select(l => new LivroResponse(l.Id, l.Titulo, l.Autor, l.Categoria, l.ExemplaresDisponiveis))
                     .ToListAsync())
-            .WithName("GetLivros")
-            .WithOpenApi();
+            .WithName("GetLivros");
 
         group.MapGet("/{id:int}", async (int id, BibliotecaContext db) =>
                 await db.Livros.FindAsync(id) is Livro livro
                     ? Results.Ok(ToResponse(livro))
                     : Results.NotFound())
-            .WithName("GetLivroById")
-            .WithOpenApi();
+            .WithName("GetLivroById");
 
         group.MapPost("/", async (LivroRequest req, BibliotecaContext db) =>
             {
@@ -44,8 +42,7 @@ public static class LivrosEndpoints
 
                 return Results.Created($"/livros/{livro.Id}", ToResponse(livro));
             })
-            .WithName("CreateLivro")
-            .WithOpenApi();
+            .WithName("CreateLivro");
 
         group.MapPut("/{id:int}", async (int id, LivroRequest req, BibliotecaContext db) =>
             {
@@ -63,8 +60,7 @@ public static class LivrosEndpoints
 
                 return Results.Ok(ToResponse(livro));
             })
-            .WithName("UpdateLivro")
-            .WithOpenApi();
+            .WithName("UpdateLivro");
 
         group.MapDelete("/{id:int}", async (int id, BibliotecaContext db) =>
             {
@@ -76,8 +72,7 @@ public static class LivrosEndpoints
 
                 return Results.NoContent();
             })
-            .WithName("DeleteLivro")
-            .WithOpenApi();
+            .WithName("DeleteLivro");
 
         return group;
     }
