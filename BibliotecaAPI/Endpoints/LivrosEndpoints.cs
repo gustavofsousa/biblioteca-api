@@ -20,8 +20,12 @@ public static class LivrosEndpoints
             .WithName("GetLivros");
 
         group.MapGet("/{id:int}", async (int id, BibliotecaContext db) =>
-                await db.Livros.FindAsync(id) is Livro livro
-                    ? Results.Ok(ToResponse(livro))
+                await db.Livros
+                    .AsNoTracking()
+                    .Where(l => l.Id == id)
+                    .Select(l => new LivroResponse(l.Id, l.Titulo, l.Autor, l.Categoria, l.ExemplaresDisponiveis))
+                    .FirstOrDefaultAsync() is LivroResponse livro
+                    ? Results.Ok(livro)
                     : Results.NotFound())
             .WithName("GetLivroById");
 
